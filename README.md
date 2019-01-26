@@ -1,5 +1,7 @@
 # DateInput
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/entercosmos/date-input.svg)](https://greenkeeper.io/)
+
 [![npm package][npm-badge]][npm]
 
 Used for entering dates.
