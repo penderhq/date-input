@@ -56,7 +56,8 @@ class Example1 extends Component {
 class Example2 extends Component {
 
     state = {
-        value: now
+        value: now,
+        focus: false
     }
 
     render() {
@@ -68,6 +69,8 @@ class Example2 extends Component {
                 <DateInput
                     className={null}
                     value={this.state.value}
+                    onFocus={() => this.setState({focus: true})}
+                    onBlur={() => this.setState({focus: false})}
                     onChange={({value}) => {
 
                         this.setState({
