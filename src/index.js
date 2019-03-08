@@ -47,16 +47,7 @@ class Input extends React.Component {
 
         return (
             <input
-                className={cx(
-                    css`
-                    background: none;
-                    border: none;
-                    display: flex;
-                    flex: 1 1 auto;
-                    min-width: 0;
-                    min-height: 0;
-                `, this.props.className
-                )}
+                className={this.props.className}
                 type="text"
                 disabled={this.props.disabled}
                 placeholder={this.props.placeholder}
@@ -108,7 +99,7 @@ class Input extends React.Component {
 export default class DateInput extends React.Component {
 
     static propTypes = {
-        className: PropTypes.string,
+        styles: PropTypes.object,
         value: PropTypes.string,
         disabled: PropTypes.bool,
         includeTime: PropTypes.bool,
@@ -117,7 +108,9 @@ export default class DateInput extends React.Component {
         datePlaceholder: PropTypes.string,
         timeFormat: PropTypes.string,
         timePlaceholder: PropTypes.string,
-        onChange: PropTypes.func.isRequired
+        onChange: PropTypes.func.isRequired,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func
     }
 
     static defaultProps = {
@@ -127,7 +120,29 @@ export default class DateInput extends React.Component {
         dateFormat: 'D/M/YYYY',
         datePlaceholder: 'dd/mm/yyyy',
         timeFormat: 'HH:mm',
-        timePlaceholder: 'hh:mm'
+        timePlaceholder: 'hh:mm',
+        styles: {
+            container: css`
+                display: flex;
+                align-items: center;
+            `,
+            dateInputContainer: css`
+                display: flex;
+            `,
+            dateInput: css`
+                background: none;
+                border: none;
+                -webkit-appearance: none;
+            `,
+            timeInputContainer: css`
+                display: flex;
+            `,
+            timeInput: css`
+                background: none;
+                border: none;
+                -webkit-appearance: none;
+            `
+        }
     }
 
     state = {
@@ -156,68 +171,55 @@ export default class DateInput extends React.Component {
         const value = this.getValue()
 
         return (
-            <div
-                className={this.props.className}
-            >
-                <div
-                    className={css`
-                            display: flex;
-                            flex: 1 1 auto;
-                            min-width: 0;
-                            min-height: 0;
-                        `}
-                >
-                    <div
-                        className={css`
-                                display: flex;
-                                flex: 1 1 auto;
-                                min-width: 0;
-                                min-height: 0;
-                                flex-grow: 1;
-                            `}
-                    >
+            <div className={this.props.styles.container}>
+                <div className={this.props.styles.dateInputContainer}>
+                    <Input
+                        className={this.props.styles.dateInput}
+                        disabled={this.props.disabled}
+                        isUTC={this.isUTC()}
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
+                        placeholder={datePlaceholder}
+                        format={dateFormat}
+                        value={value}
+                        onChange={this.handleDateChange}
+                    />
+                </div>
+                {includeTime ? (
+                    <div className={this.props.styles.timeInputContainer}>
                         <Input
-                            className={this.props.dateInputClassName}
+                            className={this.props.styles.timeInput}
                             disabled={this.props.disabled}
                             isUTC={this.isUTC()}
                             onFocus={this.handleFocus}
                             onBlur={this.handleBlur}
-                            placeholder={datePlaceholder}
-                            format={dateFormat}
+                            placeholder={timePlaceholder}
+                            format={timeFormat}
                             value={value}
-                            onChange={this.handleDateChange}
+                            onChange={this.handleTimeChange}
                         />
                     </div>
-                    {includeTime ? (
-                        <div className="time-input-wrapper">
-                            <Input
-                                className={this.props.timeInputClassName}
-                                disabled={this.props.disabled}
-                                isUTC={this.isUTC()}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
-                                placeholder={timePlaceholder}
-                                format={timeFormat}
-                                value={value}
-                                onChange={this.handleTimeChange}
-                            />
-                        </div>
-                    ) : null}
-                </div>
+                ) : null}
             </div>
         )
     }
 
-    handleFocus = () => {
+    handleFocus = (e) => {
         this.setState({
             focus: true
         })
+        if (this.props.onFocus) {
+            this.props.onFocus(e)
+        }
     }
 
-    handleBlur = () => {
+    handleBlur = (e) => {
         this.setState({
             focus: false
         })
+        if (this.props.onBlur) {
+            this.props.onBlur(e)
+        }
     }
 
     handleDateChange = next => {

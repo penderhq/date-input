@@ -64,11 +64,7 @@ class Example2 extends Component {
             <h2>
                 Date without time
             </h2>
-            <div
-                className={css`
-                    width: 200px;
-                `}
-            >
+            <div>
                 <DateInput
                     className={null}
                     value={this.state.value}
