@@ -133,6 +133,7 @@ export default class DateInput extends React.Component {
                 background: none;
                 border: none;
                 -webkit-appearance: none;
+                font-size: 16px;
             `,
             timeInputContainer: css`
                 display: flex;
@@ -141,6 +142,7 @@ export default class DateInput extends React.Component {
                 background: none;
                 border: none;
                 -webkit-appearance: none;
+                font-size: 16px;
             `
         }
     }

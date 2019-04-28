@@ -2,13 +2,14 @@ import React, {Component} from 'react'
 import {render} from 'react-dom'
 import {css} from 'emotion'
 import {injectGlobal} from 'emotion'
-
+import {Canvas, Heading, Paragraph, Box} from '@cmds/demo-utils'
 injectGlobal`
     * {
         box-sizing: border-box;
     }
     body {
         font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+        margin: 0;
     }
 `
 
@@ -24,14 +25,10 @@ class Example1 extends Component {
 
     render() {
         return <div>
-            <h2>
+            <Heading>
                 Date & time
-            </h2>
-            <div
-                className={css`
-                    width: 200px;
-                `}
-            >
+            </Heading>
+            <Box>
                 <DateInput
                     className={null}
                     value={this.state.value}
@@ -42,13 +39,15 @@ class Example1 extends Component {
                         })
                     }}
                 />
-            </div>
-            <h3>
+            </Box>
+            <Paragraph>
                 State
-            </h3>
-            <pre>
+            </Paragraph>
+            <Box>
+                <pre>
                 {JSON.stringify(this.state, null, 2)}
             </pre>
+            </Box>
         </div>
     }
 }
@@ -62,10 +61,10 @@ class Example2 extends Component {
 
     render() {
         return <div>
-            <h2>
+            <Heading>
                 Date without time
-            </h2>
-            <div>
+            </Heading>
+            <Box>
                 <DateInput
                     className={null}
                     value={this.state.value}
@@ -78,13 +77,15 @@ class Example2 extends Component {
                         })
                     }}
                 />
-            </div>
-            <h3>
+            </Box>
+            <Paragraph>
                 State
-            </h3>
-            <pre>
+            </Paragraph>
+            <Box>
+                <pre>
                 {JSON.stringify(this.state, null, 2)}
             </pre>
+            </Box>
         </div>
     }
 }
@@ -94,11 +95,10 @@ class Demo extends React.Component {
     render() {
 
         return (
-            <div>
-                <h1>DateInput Demo</h1>
+            <Canvas>
                 <Example1/>
                 <Example2/>
-            </div>
+            </Canvas>
         )
     }
 }
