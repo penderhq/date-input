@@ -20,7 +20,8 @@ const now = new Date().toISOString()
 class Example1 extends Component {
 
     state = {
-        value: now
+        value: now,
+        focus: false
     }
 
     render() {
@@ -32,6 +33,8 @@ class Example1 extends Component {
                 <DateInput
                     className={null}
                     value={this.state.value}
+                    onFocus={() => this.setState({focus: true})}
+                    onBlur={() => this.setState({focus: false})}
                     onChange={({value}) => {
 
                         this.setState({
@@ -66,7 +69,7 @@ class Example2 extends Component {
             </Heading>
             <Box>
                 <DateInput
-                    className={null}
+                    includeTime={false}
                     value={this.state.value}
                     onFocus={() => this.setState({focus: true})}
                     onBlur={() => this.setState({focus: false})}
