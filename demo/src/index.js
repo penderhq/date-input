@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {render} from 'react-dom'
 import {css} from 'emotion'
 import {injectGlobal} from 'emotion'
-import {Canvas, Heading, Paragraph, Box} from '@cmds/demo-utils'
+import {Canvas, Heading, Paragraph, Box} from '@pndr/demo-utils'
 injectGlobal`
     * {
         box-sizing: border-box;
