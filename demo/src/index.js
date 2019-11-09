@@ -21,7 +21,8 @@ class Example1 extends Component {
 
     state = {
         value: now,
-        focus: false
+        focus: false,
+        userAgent: window.navigator.userAgent
     }
 
     render() {
@@ -47,7 +48,7 @@ class Example1 extends Component {
                 State
             </Paragraph>
             <Box>
-                <pre>
+                <pre className={css`overflow: hidden;`}>
                 {JSON.stringify(this.state, null, 2)}
             </pre>
             </Box>
@@ -94,6 +95,12 @@ class Example2 extends Component {
 }
 
 class Demo extends React.Component {
+
+    componentDidMount() {
+
+        const head = document.head.querySelector('[name=viewport]')
+        head.content = "width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=0"
+    }
 
     render() {
 

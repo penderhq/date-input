@@ -1,8 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import {css, cx} from 'emotion'
+import { css, cx } from 'emotion'
 import moment from 'moment'
+
+const getNativeUIAvailable = () => /iPad|iPhone|iPod|Android/i.test(window.navigator.userAgent)
 
 class Input extends React.Component {
 
@@ -49,6 +51,7 @@ class Input extends React.Component {
             <input
                 className={this.props.className}
                 type="text"
+                inputMode={'numeric'}
                 disabled={this.props.disabled}
                 placeholder={this.props.placeholder}
                 value={this.state.value}
@@ -96,6 +99,178 @@ class Input extends React.Component {
     }
 }
 
+class AdaptiveDateInput extends React.Component {
+
+    render() {
+        return (
+            <React.Fragment>
+                {this.props.enableNativeUI ? (
+                    <input
+                        ref={'nativeDateInput'}
+                        type="date"
+                        className={css`
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            top: 0;
+                            left: 0;
+                            opacity: 0;
+                        `}
+                        value={this.props.value ? this.props.value.format('YYYY-MM-DD') : ''}
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
+                        onChange={this.handleChange}
+                    />
+                ) : null}
+                <Input
+                    {...this.props}
+                />
+                {this.props.enableNativeUI ? (
+                    <div
+                        className={css`
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                        `}
+                        onClick={this.handleChooseDateNatively}
+                    />
+                ) : null}
+            </React.Fragment>
+        )
+    }
+
+    handleFocus = e => {
+        this.props.onFocus(e)
+        this.safariFix(e.nativeEvent.target)
+    }
+
+    handleBlur = e => this.props.onBlur(e)
+
+    safariFix = (target) => {
+
+        // Fix for Safari on mobile
+        // https://github.com/facebook/react/issues/8938
+        setTimeout(() => {
+            target.defaultValue = ""
+        }, 0)
+    }
+
+    handleChooseDateNatively = () => {
+
+        this.refs.nativeDateInput.click()
+        this.refs.nativeDateInput.focus()
+    }
+
+    handleChange = e => {
+
+        const value = e.target.value
+
+        const target = e.nativeEvent.target
+
+        this.safariFix(target)
+
+        if (!value) {
+            this.props.onChange(null)
+            return
+        }
+
+        const createDate = this.props.isUTC ? moment.utc : moment
+
+        const date = createDate(value, 'YYYY-MM-DD')
+
+        this.props.onChange(date.isValid() ? date : null)
+    }
+}
+
+class AdaptiveTimeInput extends React.Component {
+
+    render() {
+
+        return (
+            <React.Fragment>
+                {this.props.enableNativeUI ? (
+                    <input
+                        ref={'nativeTimeInput'}
+                        type="time"
+                        className={css`
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            top: 0;
+                            left: 0;
+                            opacity: 0;
+                        `}
+                        value={this.props.value ? this.props.value.format('HH:mm') : ''}
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
+                        onChange={this.handleChange}
+                    />
+                ) : null}
+                <Input
+                    {...this.props}
+                />
+                {this.props.enableNativeUI ? (
+                    <div
+                        className={css`
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                        `}
+                        onClick={this.handleChoose}
+                    />
+                ) : null}
+            </React.Fragment>
+
+        )
+    }
+
+    handleFocus = (e) => {
+        this.props.onFocus(e)
+        this.safariFix(e.nativeEvent.target)
+    }
+
+    handleBlur = e => this.props.onBlur(e)
+
+    safariFix = (target) => {
+
+        // Fix for Safari on mobile
+        // https://github.com/facebook/react/issues/8938
+        setTimeout(() => {
+            target.defaultValue = ""
+        }, 0)
+    }
+
+    handleChange = e => {
+
+        const value = e.target.value
+
+        const target = e.nativeEvent.target
+
+        this.safariFix(target)
+
+        if (!value) {
+            this.props.onChange(null)
+            return
+        }
+
+        const createDate = this.props.isUTC ? moment.utc : moment
+
+        const date = createDate(value, 'HH:mm')
+
+        this.props.onChange(date.isValid() ? date : null)
+    }
+
+    handleChoose = () => {
+
+        this.refs.nativeTimeInput.click()
+        this.refs.nativeTimeInput.focus()
+    }
+}
+
 export default class DateInput extends React.Component {
 
     static propTypes = {
@@ -110,10 +285,12 @@ export default class DateInput extends React.Component {
         timePlaceholder: PropTypes.string,
         onChange: PropTypes.func.isRequired,
         onFocus: PropTypes.func,
-        onBlur: PropTypes.func
+        onBlur: PropTypes.func,
+        enableNativeUI: PropTypes.bool
     }
 
     static defaultProps = {
+        enableNativeUI: getNativeUIAvailable(),
         disabled: false,
         includeTime: true,
         sameTimeZone: false,
@@ -128,27 +305,40 @@ export default class DateInput extends React.Component {
             `,
             dateInputContainer: css`
                 display: flex;
+                position: relative;
             `,
             dateInput: css`
+                position: relative;
                 background: none;
                 border: none;
                 -webkit-appearance: none;
                 font-size: 16px;
+                width: 100%;
+            `,
+            dateInputFocus: css`
+                background-color: rgba(0, 119, 255, 0.1);
             `,
             timeInputContainer: css`
                 display: flex;
+                position: relative;
             `,
             timeInput: css`
+                position: relative;
                 background: none;
                 border: none;
                 -webkit-appearance: none;
                 font-size: 16px;
-            `
+                width: 100%;
+            `,
+            timeInputFocus: css`
+                background-color: rgba(0, 119, 255, 0.1);
+            `,
         }
     }
 
     state = {
-        focus: false
+        focus: false,
+        focusedInput: null
     }
 
     isUTC() {
@@ -167,7 +357,8 @@ export default class DateInput extends React.Component {
             datePlaceholder,
             timeFormat,
             timePlaceholder,
-            includeTime
+            includeTime,
+            enableNativeUI
         } = this.props
 
         const value = this.getValue()
@@ -175,12 +366,16 @@ export default class DateInput extends React.Component {
         return (
             <div className={this.props.styles.container}>
                 <div className={this.props.styles.dateInputContainer}>
-                    <Input
-                        className={this.props.styles.dateInput}
+                    <AdaptiveDateInput
+                        enableNativeUI={enableNativeUI}
+                        className={cx(
+                            this.props.styles.dateInput,
+                            this.state.focusedInput === 'date' ? this.props.styles.dateInputFocus : null
+                        )}
                         disabled={this.props.disabled}
                         isUTC={this.isUTC()}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
+                        onFocus={this.handleDateInputFocus}
+                        onBlur={this.handleDateInputBlur}
                         placeholder={datePlaceholder}
                         format={dateFormat}
                         value={value}
@@ -189,12 +384,16 @@ export default class DateInput extends React.Component {
                 </div>
                 {includeTime ? (
                     <div className={this.props.styles.timeInputContainer}>
-                        <Input
-                            className={this.props.styles.timeInput}
+                        <AdaptiveTimeInput
+                            enableNativeUI={enableNativeUI}
+                            className={cx(
+                                this.props.styles.timeInput,
+                                this.state.focusedInput === 'time' ? this.props.styles.dateInputFocus : null
+                            )}
                             disabled={this.props.disabled}
                             isUTC={this.isUTC()}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
+                            onFocus={this.handleTimeInputFocus}
+                            onBlur={this.handleTimeInputBlur}
                             placeholder={timePlaceholder}
                             format={timeFormat}
                             value={value}
@@ -204,6 +403,34 @@ export default class DateInput extends React.Component {
                 ) : null}
             </div>
         )
+    }
+
+    handleDateInputFocus = (e) => {
+        this.setState({
+            focusedInput: 'date'
+        })
+        this.handleFocus(e)
+    }
+
+    handleDateInputBlur = (e) => {
+        this.setState({
+            focusedInput: null
+        })
+        this.handleBlur(e)
+    }
+
+    handleTimeInputFocus = (e) => {
+        this.setState({
+            focusedInput: 'time'
+        })
+        this.handleFocus(e)
+    }
+
+    handleTimeInputBlur = (e) => {
+        this.setState({
+            focusedInput: null
+        })
+        this.handleBlur(e)
     }
 
     handleFocus = (e) => {
@@ -227,7 +454,7 @@ export default class DateInput extends React.Component {
     handleDateChange = next => {
 
         if (!next) {
-            this.setState({value: null})
+            this.setState({ value: null })
             this.handleChange({
                 value: null
             })
@@ -251,7 +478,7 @@ export default class DateInput extends React.Component {
     handleTimeChange = next => {
 
         if (!next) {
-            this.setState({value: null})
+            this.setState({ value: null })
             this.handleChange({
                 value: null
             })
@@ -271,7 +498,7 @@ export default class DateInput extends React.Component {
         })
     }
 
-    handleChange = ({value}) => {
+    handleChange = ({ value }) => {
 
         this.props.onChange({
             value: value ? value.toISOString() : null
