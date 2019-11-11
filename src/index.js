@@ -119,7 +119,7 @@ class AdaptiveDateInput extends React.Component {
             <React.Fragment>
                 {this.props.enableNativeUI ? (
                     <input
-                        ref={'nativeDateInput'}
+                        ref={'nativeInput'}
                         type="date"
                         className={css`
                             position: absolute;
@@ -137,7 +137,7 @@ class AdaptiveDateInput extends React.Component {
                 ) : null}
                 <Input
                     {...this.props}
-                    ref={this.props.onRef}
+                    ref={ref => this.input = ref}
                 />
                 {this.props.enableNativeUI ? (
                     <div
@@ -153,6 +153,16 @@ class AdaptiveDateInput extends React.Component {
                 ) : null}
             </React.Fragment>
         )
+    }
+
+    focus = () => {
+        if (this.props.enableNativeUI) {
+            this.refs.nativeInput.click()
+            this.refs.nativeInput.focus()
+        } else {
+            this.input.click()
+            this.input.focus()
+        }
     }
 
     handleFocus = e => {
@@ -173,8 +183,8 @@ class AdaptiveDateInput extends React.Component {
 
     handleChooseDateNatively = () => {
 
-        this.refs.nativeDateInput.click()
-        this.refs.nativeDateInput.focus()
+        this.refs.nativeInput.click()
+        this.refs.nativeInput.focus()
     }
 
     handleChange = e => {
@@ -206,7 +216,7 @@ class AdaptiveTimeInput extends React.Component {
             <React.Fragment>
                 {this.props.enableNativeUI ? (
                     <input
-                        ref={'nativeTimeInput'}
+                        ref={'nativeInput'}
                         type="time"
                         className={css`
                             position: absolute;
@@ -224,7 +234,7 @@ class AdaptiveTimeInput extends React.Component {
                 ) : null}
                 <Input
                     {...this.props}
-                    ref={this.props.onRef}
+                    ref={ref => this.input = ref}
                 />
                 {this.props.enableNativeUI ? (
                     <div
@@ -239,8 +249,17 @@ class AdaptiveTimeInput extends React.Component {
                     />
                 ) : null}
             </React.Fragment>
-
         )
+    }
+
+    focus = () => {
+        if (this.props.enableNativeUI) {
+            this.refs.nativeInput.click()
+            this.refs.nativeInput.focus()
+        } else {
+            this.input.click()
+            this.input.focus()
+        }
     }
 
     handleFocus = (e) => {
@@ -281,8 +300,8 @@ class AdaptiveTimeInput extends React.Component {
 
     handleChoose = () => {
 
-        this.refs.nativeTimeInput.click()
-        this.refs.nativeTimeInput.focus()
+        this.refs.nativeInput.click()
+        this.refs.nativeInput.focus()
     }
 }
 
@@ -387,7 +406,7 @@ export default class DateInput extends React.Component {
                             this.props.styles.dateInput,
                             this.state.focusedInput === 'date' ? this.props.styles.dateInputFocus : null
                         )}
-                        onRef={this.props.onDateInputRef}
+                        ref={this.props.onDateInputRef}
                         disabled={this.props.disabled}
                         isUTC={this.isUTC()}
                         onClick={this.handleDateInputClick}
@@ -407,7 +426,7 @@ export default class DateInput extends React.Component {
                                 this.props.styles.timeInput,
                                 this.state.focusedInput === 'time' ? this.props.styles.dateInputFocus : null
                             )}
-                            onRef={this.props.onTimeInputRef}
+                            ref={this.props.onTimeInputRef}
                             disabled={this.props.disabled}
                             isUTC={this.isUTC()}
                             onClick={this.handleTimeInputClick}
