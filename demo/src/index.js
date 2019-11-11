@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
-import {render} from 'react-dom'
-import {css} from 'emotion'
-import {injectGlobal} from 'emotion'
-import {Canvas, Heading, Paragraph, Box} from '@pndr/demo-utils'
+import React, { Component } from 'react'
+import { render } from 'react-dom'
+import { css } from 'emotion'
+import { injectGlobal } from 'emotion'
+import { Canvas, Heading, Paragraph, Box } from '@pndr/demo-utils'
 injectGlobal`
     * {
         box-sizing: border-box;
@@ -22,6 +22,7 @@ class Example1 extends Component {
     state = {
         value: now,
         focus: false,
+        focusedInput: null,
         userAgent: window.navigator.userAgent
     }
 
@@ -34,9 +35,16 @@ class Example1 extends Component {
                 <DateInput
                     className={null}
                     value={this.state.value}
-                    onFocus={() => this.setState({focus: true})}
-                    onBlur={() => this.setState({focus: false})}
-                    onChange={({value}) => {
+                    onDateInputRef={ref => this.dateInput = ref}
+                    onTimeInputRef={ref => this.timeInput = ref}
+                    onFocus={this.handleFocus}
+                    onBlur={() => this.setState({ focusedInput: null, focus: false })}
+                    onChange={({ value }) => {
+
+                        console.log({
+                            dateInput: this.dateInput,
+                            timeInput: this.timeInput
+                        })
 
                         this.setState({
                             value
@@ -49,10 +57,15 @@ class Example1 extends Component {
             </Paragraph>
             <Box>
                 <pre className={css`overflow: hidden;`}>
-                {JSON.stringify(this.state, null, 2)}
-            </pre>
+                    {JSON.stringify(this.state, null, 2)}
+                </pre>
             </Box>
         </div>
+    }
+
+    handleFocus = ({ e, input }) => {
+
+        this.setState({ focusedInput: input, focus: true })
     }
 }
 
@@ -72,9 +85,9 @@ class Example2 extends Component {
                 <DateInput
                     includeTime={false}
                     value={this.state.value}
-                    onFocus={() => this.setState({focus: true})}
-                    onBlur={() => this.setState({focus: false})}
-                    onChange={({value}) => {
+                    onFocus={() => this.setState({ focus: true })}
+                    onBlur={() => this.setState({ focus: false })}
+                    onChange={({ value }) => {
 
                         this.setState({
                             value
@@ -87,8 +100,8 @@ class Example2 extends Component {
             </Paragraph>
             <Box>
                 <pre>
-                {JSON.stringify(this.state, null, 2)}
-            </pre>
+                    {JSON.stringify(this.state, null, 2)}
+                </pre>
             </Box>
         </div>
     }
@@ -106,11 +119,11 @@ class Demo extends React.Component {
 
         return (
             <Canvas>
-                <Example1/>
-                <Example2/>
+                <Example1 />
+                <Example2 />
             </Canvas>
         )
     }
 }
 
-render(<Demo/>, document.querySelector('#demo'))
+render(<Demo />, document.querySelector('#demo'))

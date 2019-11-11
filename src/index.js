@@ -45,22 +45,35 @@ class Input extends React.Component {
         }
     }
 
+    focus = () => {
+        this.refs.input.click()
+        this.refs.input.focus()
+    }
+
     render() {
 
         return (
             <input
+                ref={'input'}
                 className={this.props.className}
                 type="text"
                 inputMode={'numeric'}
                 disabled={this.props.disabled}
                 placeholder={this.props.placeholder}
                 value={this.state.value}
+                onClick={this.handleClick}
                 onChange={this.handleChange}
                 onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
                 onKeyPress={this.handleKeyPress}
             />
         )
+    }
+
+    handleClick = (e) => {
+        if (this.props.onClick) {
+            this.props.onClick(e)
+        }
     }
 
     handleKeyPress = (e) => {
@@ -77,13 +90,13 @@ class Input extends React.Component {
         })
     }
 
-    handleFocus = () => {
-        this.props.onFocus && this.props.onFocus()
+    handleFocus = (e) => {
+        this.props.onFocus && this.props.onFocus(e)
     }
 
-    handleBlur = () => {
+    handleBlur = (e) => {
 
-        this.props.onBlur && this.props.onBlur()
+        this.props.onBlur && this.props.onBlur(e)
 
         const createDate = this.props.isUTC ? moment.utc : moment
 
@@ -124,6 +137,7 @@ class AdaptiveDateInput extends React.Component {
                 ) : null}
                 <Input
                     {...this.props}
+                    ref={this.props.onRef}
                 />
                 {this.props.enableNativeUI ? (
                     <div
@@ -210,6 +224,7 @@ class AdaptiveTimeInput extends React.Component {
                 ) : null}
                 <Input
                     {...this.props}
+                    ref={this.props.onRef}
                 />
                 {this.props.enableNativeUI ? (
                     <div
@@ -372,8 +387,10 @@ export default class DateInput extends React.Component {
                             this.props.styles.dateInput,
                             this.state.focusedInput === 'date' ? this.props.styles.dateInputFocus : null
                         )}
+                        onRef={this.props.onDateInputRef}
                         disabled={this.props.disabled}
                         isUTC={this.isUTC()}
+                        onClick={this.handleDateInputClick}
                         onFocus={this.handleDateInputFocus}
                         onBlur={this.handleDateInputBlur}
                         placeholder={datePlaceholder}
@@ -390,8 +407,10 @@ export default class DateInput extends React.Component {
                                 this.props.styles.timeInput,
                                 this.state.focusedInput === 'time' ? this.props.styles.dateInputFocus : null
                             )}
+                            onRef={this.props.onTimeInputRef}
                             disabled={this.props.disabled}
                             isUTC={this.isUTC()}
+                            onClick={this.handleTimeInputClick}
                             onFocus={this.handleTimeInputFocus}
                             onBlur={this.handleTimeInputBlur}
                             placeholder={timePlaceholder}
@@ -405,32 +424,64 @@ export default class DateInput extends React.Component {
         )
     }
 
+    handleDateInputClick = (e) => {
+        if (!this.props.onClick) {
+            return
+        }
+        this.props.onClick({
+            input: 'date',
+            e
+        })
+    }
+
+    handleTimeInputClick = (e) => {
+        if (!this.props.onClick) {
+            return
+        }
+        this.props.onClick({
+            input: 'time',
+            e
+        })
+    }
+
     handleDateInputFocus = (e) => {
         this.setState({
             focusedInput: 'date'
         })
-        this.handleFocus(e)
+        this.handleFocus({
+            input: 'date',
+            e
+        })
     }
 
     handleDateInputBlur = (e) => {
         this.setState({
             focusedInput: null
         })
-        this.handleBlur(e)
+        this.handleBlur({
+            input: 'date',
+            e
+        })
     }
 
     handleTimeInputFocus = (e) => {
         this.setState({
             focusedInput: 'time'
         })
-        this.handleFocus(e)
+        this.handleFocus({
+            input: 'time',
+            e
+        })
     }
 
     handleTimeInputBlur = (e) => {
         this.setState({
             focusedInput: null
         })
-        this.handleBlur(e)
+        this.handleBlur({
+            input: 'time',
+            e
+        })
     }
 
     handleFocus = (e) => {

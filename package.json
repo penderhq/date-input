@@ -1,6 +1,6 @@
 {
   "name": "@pndr/date-input",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Used for entering dates.",
   "main": "lib/index.js",
   "module": "es/index.js",
